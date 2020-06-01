@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webos
+  labels:
+    app: webos
+spec:
+  ports:
+  - port: 80
+    nodePort: 30001
+  selector:
+    app: webos
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webos
+  labels:
+    app: webos
+spec:
+  selector:
+    matchLabels:
+      app: webos
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: webos
+    spec:
+      containers:
+      - image: demetrix/httpd:latest
+        name: webos
+        ports:
+        - containerPort: 80
+          name: webos
